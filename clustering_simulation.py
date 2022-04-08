@@ -2,6 +2,7 @@ import pygame
 import random
 import traffic            # traffic.py needs to be in the same directory
 import report           # report.py needs to be in the same directory
+
 '''
 reference of pygame library: https://realpython.com/pygame-a-primer/
 '''
@@ -105,27 +106,13 @@ while running:
             batch = report.Batch(pygame, batch.batch_num+1, TIME_BATCH)           
             
         elif event.type == MOUSEBUTTONUP: # Create/release an accident upon a mouse click
-            x, y = pygame.mouse.get_pos()            
-            for road in roads:
-                '''
-                Only cars on moving lanes can be selected
-                Cars on inactive lanes (i.e., lanes with red light) are NOT selected,
-                                    since they are not supposed to move on red light
-                '''
-                lanes_on_mouse_pos = road.find_lanes_on_mouse_pos(x, y)
-                if len(lanes_on_mouse_pos) > 0:
-                    break                
-            if len(lanes_on_mouse_pos) > 0:                
-                for lane in lanes_on_mouse_pos:
-                    car_on_mouse_pos = lane.find_nearest_car_to_mouse_pos(x, y)
-                    if car_on_mouse_pos != None:
-                        car_on_mouse_pos.toggle_accident(batch)
-                        batch.process_reports()     # Process reports
-                        break
-                if car_on_mouse_pos == None:
-                        print("No car found on the lane")
+            x, y = pygame.mouse.get_pos()
+            car = traffic.find_car_nearest_to_mouse_pos(roads, x, y)
+            if car != None:
+                car.toggle_accident(batch)
+                batch.process_reports()     # Process reports
             else:
-                print("No lane found on mouse position")
+                print("No car found on the lane at mouse position")
                 
     '''
     Redraw screen

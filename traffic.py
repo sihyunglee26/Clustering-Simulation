@@ -2,6 +2,7 @@ import pygame
 import random
 import itertools
 import report
+import math
 
 '''
 Define constants
@@ -878,6 +879,37 @@ class Car():
             self.accident = False
             self.color = self.prev_color
             self.surf.fill(self.color)
+
+    def distance_from(self, x, y):
+        return math.sqrt((self.rect.centerx - x)**2 + (self.rect.centery-y)**2)
+
+def find_car_nearest_to_mouse_pos(roads, x, y):
+    for road in roads:
+        lanes_on_mouse_pos = road.find_lanes_on_mouse_pos(x, y)
+        if len(lanes_on_mouse_pos) > 0:
+            break
+        
+    if len(lanes_on_mouse_pos) > 0:
+        cars_on_mouse_pos = []
+        for lane in lanes_on_mouse_pos:
+            car = lane.find_nearest_car_to_mouse_pos(x, y)
+            if car != None:
+                cars_on_mouse_pos.append(car)
+
+        if (len(cars_on_mouse_pos) > 0):
+            car_nearest_to_mouse_pos = None
+            min_distance = math.inf
+            for car in cars_on_mouse_pos:
+                distance = car.distance_from(x,y)
+                if (distance < min_distance):
+                    min_distance = distance
+                    car_nearest_to_mouse_pos = car
+            return car
+        else:
+            return None
+        
+    else:
+        return None
 
 '''
 Define an Intersection object
