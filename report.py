@@ -21,7 +21,7 @@ Define distance functions
 '''
 def distance(x1, y1, lane1, time1, event1,\
                          x2, y2, lane2, time2, event2):
-    if lane1.road != lane2.road:
+    if not lane1.road.on_the_same_road_with(lane2.road):
         return math.inf     # For two reports to be close, their roads must be the same
     
     return math.sqrt(distance_position(x1, y1, x2, y2)**2 +\
@@ -73,7 +73,7 @@ class Cluster():
                          report.x, report.y, report.lane, report.time, report.event)
 
     def insert(self, report):
-        if self.lane.road != report.lane.road:    # For a report to belong to a cluster, their roads must be the same
+        if not self.lane.road.on_the_same_road_with(report.lane.road):    # For a report to belong to a cluster, their roads must be the same
             return
 
         # Insert the new report into the report list
